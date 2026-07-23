@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Register Â· Medicine Reminder{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Create an account</h1>
+  <form method="post" action="{{ url_for('register') }}">
+    <label>Username
+      <input type="text" name="username" value="{{ form.username or '' }}" required />
+    </label>
+    <label>Password
+      <input type="password" name="password" required />
+    </label>
+    <label>Full name
+      <input type="text" name="full_name" value="{{ form.full_name or '' }}" />
+    </label>
+    <label>Email
+      <input type="email" name="email" value="{{ form.email or '' }}" />
+    </label>
+    <label>Phone (for SMS, e.g. +14155551234)
+      <input type="text" name="phone" value="{{ form.phone or '' }}" />
+    </label>
+    <label class="check">
+      <input type="checkbox" name="sms_enabled" /> Enable SMS reminders for my account
+    </label>
+    <button type="submit" class="btn primary">Register</button>
+  </form>
+  <p class="hint">Already have an account? <a href="{{ url_for('login') }}">Log in</a>.</p>
+</div>
+{% endblock %}

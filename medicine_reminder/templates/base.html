@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %} Medicine Reminder{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="pill">💊</span>
+      <a href="{{ url_for('dashboard') }}">Medicine Reminder</a>
+    </div>
+    <nav>
+      {% if current_user %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('add_medicine') }}">Add Medicine</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        {% if current_user['is_admin'] %}
+          <a href="{{ url_for('users_list') }}">Users</a>
+        {% endif %}
+        <a class="muted" href="{{ url_for('logout') }}">Logout ({{ current_user['username'] }})</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <small>Medicine Reminder Â· Flask + SQLite + Twilio</small>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Â· Medicine Reminder{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>My Medicines</h1>
+  <a href="{{ url_for('add_medicine') }}" class="btn primary">+ Add Medicine</a>
+</div>
+
+{% if medicines %}
+<div class="grid">
+  {% for m in medicines %}
+  <div class="card med-card">
+    <div class="med-head">
+      <h3>{{ m.name }}</h3>
+      <span class="badge">{{ m.frequency }}</span>
+    </div>
+    <ul class="meta">
+      <li><strong>Dosage:</strong> {{ m.dosage or 'â€”' }}</li>
+      <li><strong>Times:</strong>
+        {% for t in m.times.split(',') %}<span class="time">{{ t }}</span>{% endfor %}
+      </li>
+      {% if m.start_date %}<li><strong>Start:</strong> {{ m.start_date }}</li>{% endif %}
+      {% if m.end_date %}<li><strong>End:</strong> {{ m.end_date }}</li>{% endif %}
+      {% if m.notes %}<li><strong>Notes:</strong> {{ m.notes }}</li>{% endif %}
+    </ul>
+
+    <div class="sms-row">
+      <span>SMS reminder</span>
+      <label class="switch">
+        <input type="checkbox" class="sms-toggle" data-id="{{ m.id }}"
+               {{ 'checked' if m.sms_enabled else '' }} />
+        <span class="slider"></span>
+      </label>
+      <span class="sms-state">{{ 'ON' if m.sms_enabled else 'OFF' }}</span>
+    </div>
+
+    <div class="actions">
+      <a href="{{ url_for('edit_medicine', med_id=m.id) }}" class="btn small">Edit</a>
+      <form method="post" action="{{ url_for('test_sms', med_id=m.id) }}" style="display:inline">
+        <button type="submit" class="btn small ghost">Test SMS</button>
+      </form>
+      <form method="post" action="{{ url_for('delete_medicine', med_id=m.id) }}"
+            onsubmit="return confirm('Delete {{ m.name }}?');" style="display:inline">
+        <button type="submit" class="btn small danger">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card empty">
+  <p>No medicines yet. <a href="{{ url_for('add_medicine') }}">Add your first one</a>.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.sms-toggle').forEach(function (el) {
+  el.addEventListener('change', function () {
+    const id = this.dataset.id;
+    const stateEl = this.closest('.sms-row').querySelector('.sms-state');
+    fetch(`/medicine/${id}/toggle-sms`, { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          stateEl.textContent = data.sms_enabled ? 'ON' : 'OFF';
+        } else {
+          this.checked = !this.checked;
+          alert('Could not update toggle.');
+        }
+      })
+      .catch(() => { this.checked = !this.checked; });
+  });
+});
+</script>
+{% endblock %}

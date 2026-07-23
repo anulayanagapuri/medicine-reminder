@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Profile Â· Medicine Reminder{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>My Profile</h1>
+  <form method="post" action="{{ url_for('profile') }}">
+    <label>Username
+      <input type="text" value="{{ user.username }}" disabled />
+    </label>
+    <label>Full name
+      <input type="text" name="full_name" value="{{ user.full_name or '' }}" />
+    </label>
+    <label>Email
+      <input type="email" name="email" value="{{ user.email or '' }}" />
+    </label>
+    <label>Phone (E.164 format, e.g. +14155551234)
+      <input type="text" name="phone" value="{{ user.phone or '' }}" />
+    </label>
+    <label class="check">
+      <input type="checkbox" name="sms_enabled" {{ 'checked' if user.sms_enabled else '' }} />
+      Account-level SMS reminders enabled
+    </label>
+    <label>New password (leave blank to keep current)
+      <input type="password" name="password" />
+    </label>
+    <button type="submit" class="btn primary">Save changes</button>
+  </form>
+  <p class="hint">Account type: <strong>{{ 'Admin' if user.is_admin else 'Standard user' }}</strong></p>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if action == 'edit' else 'Add' }} Medicine{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>{{ 'Edit Medicine' if action == 'edit' else 'Add Medicine' }}</h1>
+  <form method="post"
+        action="{{ url_for('edit_medicine', med_id=med_id) if action == 'edit' else url_for('add_medicine') }}">
+
+    <label>Medicine name *
+      <input type="text" name="name" value="{{ form.name or '' }}" required />
+    </label>
+
+    <label>Dosage (e.g. 1 tablet, 5 ml)
+      <input type="text" name="dosage" value="{{ form.dosage or '' }}" />
+    </label>
+
+    <label>Frequency *
+      <select name="frequency" id="frequency" required>
+        {% for label, count in frequencies.items() %}
+          <option value="{{ label }}" {{ 'selected' if form.frequency == label else '' }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <fieldset class="times-box">
+      <legend>Reminder times (24h, HH:MM)</legend>
+      <div id="times-list">
+        {% set existing = (form.times.split(',') if form.times else ['09:00']) %}
+        {% for t in existing %}
+          <input type="time" name="times" value="{{ t }}" />
+        {% endfor %}
+      </div>
+      <button type="button" class="btn small" id="add-time">+ Add another time</button>
+    </fieldset>
+
+    <div class="two-col">
+      <label>Start date
+        <input type="date" name="start_date" value="{{ form.start_date or '' }}" />
+      </label>
+      <label>End date (optional)
+        <input type="date" name="end_date" value="{{ form.end_date or '' }}" />
+      </label>
+    </div>
+
+    <label>Notes
+      <textarea name="notes" rows="2">{{ form.notes or '' }}</textarea>
+    </label>
+
+    <label class="check">
+      <input type="checkbox" name="sms_enabled" {{ 'checked' if form.sms_enabled else '' }} />
+      Send SMS for this medicine
+    </label>
+
+    <button type="submit" class="btn primary">{{ 'Save changes' if action == 'edit' else 'Add medicine' }}</button>
+    <a href="{{ url_for('dashboard') }}" class="btn ghost">Cancel</a>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('add-time').addEventListener('click', function () {
+  const list = document.getElementById('times-list');
+  const input = document.createElement('input');
+  input.type = 'time';
+  input.name = 'times';
+  input.value = '12:00';
+  list.appendChild(input);
+});
+</script>
+{% endblock %}

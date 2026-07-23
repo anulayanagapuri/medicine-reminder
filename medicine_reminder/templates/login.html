@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Login Â· Medicine Reminder{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Log in</h1>
+  <form method="post" action="{{ url_for('login') }}">
+    <label>Username
+      <input type="text" name="username" required autofocus />
+    </label>
+    <label>Password
+      <input type="password" name="password" required />
+    </label>
+    <button type="submit" class="btn primary">Log in</button>
+  </form>
+  <p class="hint">No account? <a href="{{ url_for('register') }}">Register here</a>.</p>
+  <p class="hint demo">Demo login â†’ <strong>admin</strong> / <strong>admin123</strong></p>
+</div>
+{% endblock %}
